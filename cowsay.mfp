@@ -1,11 +1,15 @@
 :: GHETTO SCRIPTED BY PAWS
 
-:cowsay
+:cowsay [sayWhat?]
 
-setlocal EnableExtensions EnableDelayedExpansion
+setlocal EnableDelayedExpansion
 
-:: ask for user input
-set /p "input=Cow says: "
+rem skip prompting if given argument
+set "input=%~1"
+if "%input%"=="" (
+    rem ask for user input
+    set /p "input=Cow says: "
+)
 
 :: get string length to calculate the text box
 
