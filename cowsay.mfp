@@ -1,7 +1,7 @@
 :: GHETTO SCRIPTED BY PAWS
+:: CONTRIBUTIONS BY NIGHTLY
 
 :cowsay [sayWhat?]
-
 setlocal EnableDelayedExpansion
 
 rem skip prompting if given argument
@@ -12,31 +12,18 @@ if "%input%"=="" (
 )
 
 :: get string length to calculate the text box
-
-set "length=0"
-if not defined input goto :outputlength
-:getlength
-if not "!input:~%length%,1!" == "" (
-    set /a length+=1
-    goto :getlength
-)
-:outputlength
+call :getLength "%input%" length
 echo [cowsay] DEBUG: length of variable input is %length% >>"%logfile%"
 
-set "col=%length%"
-set /a col+=3
+:: create border
+set /a "col=%length% + 3"
 set "char=-"
 set "border="
-
-:buildloop
-set /a buildloop+=1
-set "border=%border%%char%"
-if "%buildloop%" == "%col%" goto :cow
-goto :buildloop
+for /l in (1,1,%col%) do (
+    set "bord=!bord!%char%"
+)
 
 :: main cow thing
-
-:cow
 echo.
 echo %border%
 echo ^< %input% ^>
@@ -50,3 +37,19 @@ echo         (__)\         )\ /\
 echo              ^|^|------w^|
 echo              ^|^|      ^|^|
 goto :eof
+
+
+:getLength [input] [returnVar]
+setlocal EnableDelayedExpansion
+set "_inp=%~1"
+set "_length=0"
+
+for /l %%J in (0) do (
+    call set "_tmpComp=!!_inp:~!_length!,1!!"
+    if "!_tmpComp!"=="" (
+        endlocal & set "%~2=!length!"
+        goto :eof
+    )
+    set /a "_length+=1"
+)
+exit /b 1
